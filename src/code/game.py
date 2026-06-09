@@ -17,7 +17,12 @@ class Game:
         self.all_sprites = pg.sprite.Group()
 
         # player setup
-        self.player = Player(pg.Surface((32, 32)), (0, 0), (self.all_sprites,))
+        self.player = Player(pg.Surface((64, 64)), (0, 0), (self.all_sprites,))
+
+        # grid
+        self.vertical_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(0, WINDOW_HEIGHT, 64)]
+        self.horizontal_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(0, WINDOW_WIDTH, 64)]
+        self.grid = self.vertical_lines + self.horizontal_lines
 
     def run(self):
         """Starts the game loop"""
@@ -31,6 +36,9 @@ class Game:
             # draw calls
             self.screen.fill(BG_COLOR)
             self.all_sprites.draw(self.screen)
+
+            # draw grid
+            for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
 
             # update calls
             self.all_sprites.update(dt)
