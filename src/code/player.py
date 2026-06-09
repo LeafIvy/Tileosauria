@@ -11,16 +11,18 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_frect(topleft=pos)
 
         # movement attributes
-        move_delay_time = 250 # milliseconds
-        self.speed = 1 # tiles per {move_delay_time}
+        self.move_delay = Timer(250)
+        self.speed = 1 # tiles per 250ms
         self.direction = pg.Vector2()
-        self.move_delay = Timer(move_delay_time)
 
     def input(self):
         """Get input from keyboard and alter direction vector"""
         keys = pg.key.get_pressed()
         self.direction.x = int(keys[pg.K_d]) - int(keys[pg.K_a])
         self.direction.y = int(keys[pg.K_s]) - int(keys[pg.K_w])
+        # slow down diagonal movement
+        if self.direction.magnitude() > 1: self.move_delay.duration = 1.414 * 250
+        else: self.move_delay.duration = 250
 
     def move(self, dt):
         """Alter position of player rect"""
