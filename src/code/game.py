@@ -1,4 +1,5 @@
 from src.utils import *
+from .player import Player
 
 
 class Game:
@@ -12,6 +13,12 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
 
+        # sprite groups
+        self.all_sprites = pg.sprite.Group()
+
+        # player setup
+        self.player = Player(pg.Surface((32, 32)), (0, 0), (self.all_sprites,))
+
     def run(self):
         """Starts the game loop"""
         while self.running:
@@ -23,8 +30,10 @@ class Game:
 
             # draw calls
             self.screen.fill(BG_COLOR)
+            self.all_sprites.draw(self.screen)
 
             # update calls
+            self.all_sprites.update(dt)
             pg.display.update()
 
         pg.quit()
