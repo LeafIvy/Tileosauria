@@ -12,7 +12,7 @@ class Timer:
         self.repeat = repeat
         if autostart: self.activate()
 
-    def __repr__(self):
+    def __bool__(self):
         return self.active
 
     def activate(self):
