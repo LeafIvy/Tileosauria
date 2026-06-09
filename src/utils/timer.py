@@ -12,6 +12,9 @@ class Timer:
         self.repeat = repeat
         if autostart: self.activate()
 
+    def __repr__(self):
+        return self.active
+
     def activate(self):
         self.active = True
         self.start_time = pg.time.get_ticks()
