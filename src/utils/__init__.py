@@ -1,4 +1,5 @@
 from .settings import *
+from .timer import Timer
 
 
 def get_quit(event):

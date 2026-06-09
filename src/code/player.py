@@ -13,6 +13,7 @@ class Player(pg.sprite.Sprite):
         # movement attributes
         self.speed = 3 # tiles per second
         self.direction = pg.Vector2()
+        self.move_delay = Timer(200)
 
     def input(self):
         """Get input from keyboard and alter direction vector"""
