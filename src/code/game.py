@@ -20,19 +20,19 @@ class Game:
         self.all_sprites = AllSprites()
 
         # player setup
-        self.player = Player(pg.Surface((64, 64)), (0, 0), (self.all_sprites,))
+        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,))
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
-        saur_surf = pg.transform.scale2x(saur_surf)
-        self.saur = Tileosaur(saur_surf, (5*64, 64), (self.all_sprites,))
+        saur_surf = pg.transform.scale_by(TILE_SIZE / saur_surf.get_width())
+        self.saur = Tileosaur(saur_surf, (5*TILE_SIZE, TILE_SIZE), (self.all_sprites,))
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
-        podia_surf = pg.transform.scale2x(podia_surf)
-        self.podia = Tileopodium(podia_surf, (-5*64, 3*64), (self.all_sprites,))
+        podia_surf = pg.transform.scale_by(TILE_SIZE / podia_surf.get_width())
+        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
 
         # grid
-        self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, 64)]
-        self.horizontal_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, 64)]
+        self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
+        self.horizontal_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, TILE_SIZE)]
         self.grid = self.vertical_lines + self.horizontal_lines
 
     def run(self):
