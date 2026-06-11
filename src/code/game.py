@@ -1,6 +1,7 @@
 from src.utils import *
 from .player import Player
 from .tileosaur import Tileosaur
+from .tileopodium import Tileopodium
 from src.utils.groups import AllSprites
 
 
@@ -24,6 +25,10 @@ class Game:
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale2x(saur_surf)
         self.saur = Tileosaur(saur_surf, (5*64, 64), (self.all_sprites,))
+
+        podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
+        podia_surf = pg.transform.scale2x(podia_surf)
+        self.podia = Tileopodium(podia_surf, (-5*64, 3*64), (self.all_sprites,))
 
         # grid
         self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, 64)]
