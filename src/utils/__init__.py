@@ -1,5 +1,11 @@
 from .settings import *
 from .timer import Timer
+import math
+
+class Node:
+    def __init__(self, val=None, next=None):
+        self.val = val
+        self.next = next
 
 
 def get_quit(event):

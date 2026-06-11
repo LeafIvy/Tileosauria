@@ -11,8 +11,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_frect(topleft=pos)
 
         # movement attributes
-        self.move_delay = Timer(250)
-        self.speed = 1 # tiles per 250ms
+        self.move_delay = Timer(250) # cover 1 tile every 250ms
         self.direction = pg.Vector2()
 
     def input(self):
@@ -28,9 +27,9 @@ class Player(pg.sprite.Sprite):
         """Alter position of player rect"""
         # moves player after timer's over
         if not self.move_delay:
-            self.rect.x += self.speed * TILE_SIZE * self.direction.x
+            self.rect.x += TILE_SIZE * self.direction.x
 
-            self.rect.y += self.speed * TILE_SIZE * self.direction.y
+            self.rect.y += TILE_SIZE * self.direction.y
 
             if self.direction: self.move_delay.activate() # reactivates timer
 
