@@ -16,4 +16,4 @@ class AllSprites(pg.sprite.Group):
 
         for sprite in self:
             # Sprites are drawn relative to the player
-            self.screen.blit(sprite.image, sprite.rect.topleft)
+            self.screen.blit(sprite.image, sprite.rect.topleft + self.offset)
