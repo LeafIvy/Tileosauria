@@ -1,11 +1,7 @@
-from .settings import *
-from .timer import Timer
 import math
 
-class Node:
-    def __init__(self, val=None, next=None):
-        self.val = val
-        self.next = next
+from .settings import *
+from .timer import Timer
 
 
 def get_quit(event):

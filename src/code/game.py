@@ -23,11 +23,11 @@ class Game:
         self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,))
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
-        saur_surf = pg.transform.scale_by(TILE_SIZE / saur_surf.get_width())
+        saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
         self.saur = Tileosaur(saur_surf, (5*TILE_SIZE, TILE_SIZE), (self.all_sprites,))
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
-        podia_surf = pg.transform.scale_by(TILE_SIZE / podia_surf.get_width())
+        podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
         self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
 
         # grid
