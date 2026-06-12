@@ -24,15 +24,15 @@ class Game:
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
-        self.saur = Tileosaur(saur_surf, (5*TILE_SIZE, TILE_SIZE), (self.all_sprites,))
+        self.saur = Tileosaur(saur_surf, (7*TILE_SIZE, 5*TILE_SIZE), (self.all_sprites,))
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
         podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
         self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
 
         # grid
-        self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
-        self.horizontal_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, TILE_SIZE)]
+        self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(0, WINDOW_WIDTH, TILE_SIZE)]
+        self.horizontal_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(0, WINDOW_HEIGHT, TILE_SIZE)]
         self.grid = self.vertical_lines + self.horizontal_lines
 
     def run(self):
