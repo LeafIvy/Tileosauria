@@ -110,7 +110,7 @@ class Tileosaur(Creature):
         """Updates sprite values"""
         self.nodes.clear()      # clear and create new nodes every frame for dynamic pathfinding
         self.create_nodes()
-        self.get_direction(self.player.rect)
+        # self.get_direction(self.player.rect)
         self.move_delay.update()
 
 class TileNode(pg.FRect):

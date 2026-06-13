@@ -9,9 +9,11 @@ class Player(pg.sprite.Sprite):
         # base settings
         self.image = surf
         self.rect  = self.image.get_frect(topleft=pos)
+        self.old_pos = self.rect.center
 
         # movement attributes
-        self.move_delay = Timer(250) # cover 1 tile every 250ms
+        self.speed      = 4 # tiles per second
+        self.move_delay = Timer(1000 / self.speed) # cover 1 tile every 250ms
         self.direction  = pg.Vector2()
 
         # collision
@@ -30,11 +32,14 @@ class Player(pg.sprite.Sprite):
         """Alter position of player rect"""
         # moves player after timer's over
         if not self.move_delay:
-            self.rect.x += TILE_SIZE * self.direction.x
-
-            self.rect.y += TILE_SIZE * self.direction.y
-
+            self.rect.center += TILE_SIZE * self.direction
+            self.collision()
+            self.old_pos = self.rect.center
             if self.direction: self.move_delay.activate() # reactivates timer
+
+    def collision(self):
+        if self.rect.center in self.collision_sprites:
+            self.rect.center = self.old_pos
 
     def update(self, dt):
         """Call methods to update player data"""
