@@ -3,7 +3,7 @@ from src.utils import *
 
 class Player(pg.sprite.Sprite):
     """Base class for Player"""
-    def __init__(self, surf, pos, groups):
+    def __init__(self, surf, pos, groups, collision_sprites):
         super().__init__(groups)
 
         # base settings
@@ -13,6 +13,9 @@ class Player(pg.sprite.Sprite):
         # movement attributes
         self.move_delay = Timer(250) # cover 1 tile every 250ms
         self.direction  = pg.Vector2()
+
+        # collision
+        self.collision_sprites = collision_sprites
 
     def input(self):
         """Get input from keyboard and alter direction vector"""

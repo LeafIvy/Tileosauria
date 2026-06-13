@@ -18,9 +18,10 @@ class Game:
 
         # sprite groups
         self.all_sprites = AllSprites()
+        self.collision_sprites = pg.sprite.Group()  # for use by player only
 
         # player setup
-        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,))
+        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,), self.collision_sprites)
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
@@ -28,7 +29,7 @@ class Game:
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
         podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
-        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
+        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites, self.collision_sprites))
 
         # grid
         self.vertical_lines     = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
