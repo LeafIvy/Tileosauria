@@ -8,11 +8,11 @@ class Player(pg.sprite.Sprite):
 
         # base settings
         self.image = surf
-        self.rect = self.image.get_frect(topleft=pos)
+        self.rect  = self.image.get_frect(topleft=pos)
 
         # movement attributes
         self.move_delay = Timer(250) # cover 1 tile every 250ms
-        self.direction = pg.Vector2()
+        self.direction  = pg.Vector2()
 
     def input(self):
         """Get input from keyboard and alter direction vector"""

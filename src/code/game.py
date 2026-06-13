@@ -11,10 +11,10 @@ class Game:
         pg.init()
 
         # game setup
-        self.screen = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.screen     = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.clock      = pg.time.Clock()
+        self.running    = True
         pg.display.set_caption(TITLE)
-        self.clock = pg.time.Clock()
-        self.running = True
 
         # sprite groups
         self.all_sprites = AllSprites()
@@ -31,9 +31,9 @@ class Game:
         self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
 
         # grid
-        self.vertical_lines = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
-        self.horizontal_lines = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, TILE_SIZE)]
-        self.grid = self.vertical_lines + self.horizontal_lines
+        self.vertical_lines     = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
+        self.horizontal_lines   = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, TILE_SIZE)]
+        self.grid               = self.vertical_lines + self.horizontal_lines
 
     def run(self):
         """Starts the game loop"""

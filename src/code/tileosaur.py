@@ -9,11 +9,11 @@ class Tileosaur(Creature):
     def __init__(self, surf, pos, groups, target):
         super().__init__(surf, pos, groups)
         # movement
-        self.speed = 3
-        self.initial_delay = 1000/self.speed
-        self.move_delay = Timer(self.initial_delay, func=self.move, autostart=True, repeat=True)
-        self.player = target
-        self.direction = pg.Vector2()
+        self.speed          = 3
+        self.initial_delay  = 1000/self.speed
+        self.move_delay     = Timer(self.initial_delay, func=self.move, autostart=True, repeat=True)
+        self.player         = target
+        self.direction      = pg.Vector2()
 
         #pathfinding
         self.range = 5
@@ -37,14 +37,15 @@ class Tileosaur(Creature):
         """
         if target.center not in self.nodes: return [self.rect]  # don't move if target is outside of range
 
-        for node in self.nodes.values(): node.distance_cost = (node.centerx - target.centerx) ** 2 + (node.centery - target.centery) ** 2
+        for node in self.nodes.values(): node.distance_cost = ((node.centerx - target.centerx) ** 2
+                                                               + (node.centery - target.centery) ** 2)
 
-        current_node = self.nodes[self.rect.center]     # node at sprite position
-        current_node.cost = 0
-        start = current_node    # for referencing first node later
-        open_set = []       # list of contacted nodes
-        closed_set = set()  # list of fully explored nodes
-        path = []   # list of nodes tracing from target to self
+        current_node        = self.nodes[self.rect.center]     # node at sprite position
+        current_node.cost   = 0
+        start               = current_node    # for referencing first node later
+        open_set            = []       # list of contacted nodes
+        closed_set          = set()  # list of fully explored nodes
+        path                = []   # list of nodes tracing from target to self
         heapq.heappush(open_set, (current_node.total_cost(), current_node))
 
         offsets = [(TILE_SIZE, TILE_SIZE), (TILE_SIZE, -TILE_SIZE),                         # List of offsets to
@@ -74,7 +75,7 @@ class Tileosaur(Creature):
                 # if node's cost can be updated to lower it through new path then do that
                 # here, current_node.cost + path_cost is g(n)
                 if (neighbour.total_cost()) > (current_node.cost + path_cost + neighbour.distance_cost):
-                    neighbour.cost = current_node.cost + path_cost
+                    neighbour.cost   = current_node.cost + path_cost
                     neighbour.parent = current_node
                 heapq.heappush(open_set, (neighbour.total_cost(), neighbour))   # enable it to be explored later
 
@@ -95,9 +96,10 @@ class Tileosaur(Creature):
 
         # normalizing diagonal movement speed
         if self.direction.magnitude() > 1:
-            if self.move_delay.duration == self.initial_delay:
+            if self.move_delay.duration  == self.initial_delay:
                 self.move_delay.duration *= 1.414
-        else: self.move_delay.duration = 1000/self.speed
+        else:
+            self.move_delay.duration = 1000/self.speed
 
     def move(self):
         """Moves sprite in the direction it's pointing"""
@@ -115,10 +117,10 @@ class TileNode(pg.FRect):
     """Nodes used for pathfinding through A*"""
     def __init__(self, pos):
         super().__init__(pos, (5, 5))
-        self.center = pos
-        self.parent = None
-        self.cost = math.inf   # cost from initial point, i.e, g(n)
-        self.distance_cost = math.inf    # cost to target, i.e, h(n)
+        self.center         = pos
+        self.parent         = None
+        self.cost           = math.inf   # cost from initial point, i.e, g(n)
+        self.distance_cost  = math.inf    # cost to target, i.e, h(n)
 
     def total_cost(self):
         """Returns total cost of node, i.e, f(n)"""
