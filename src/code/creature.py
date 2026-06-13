@@ -17,4 +17,7 @@ class Creature(pg.sprite.Sprite):
         self.thirst_lvl  = 0
         self.age         = 0
 
+        # movement attributes
+        self.is_passable = False
+
 
