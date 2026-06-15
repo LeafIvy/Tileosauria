@@ -6,8 +6,12 @@ from .creature import Creature
 
 class Tileosaur(Creature):
     """Base class for fauna"""
-    def __init__(self, surf, pos, groups, target):
+    def __init__(self, surf, pos, groups, target, collision_sprites):
         super().__init__(surf, pos, groups)
+
+        self.collision_sprites = collision_sprites
+        self.tile_cost = math.inf
+
         # movement
         self.speed          = 3
         self.initial_delay  = 1000/self.speed
@@ -27,7 +31,7 @@ class Tileosaur(Creature):
         centery = [y for y in range(int(self.rect.centery - self.range * TILE_SIZE),
                                     int(self.rect.centery + self.range * TILE_SIZE + 1), TILE_SIZE)]
         centers = [(x, y) for x in centerx for y in centery]
-        for pos in centers: self.nodes[pos] = TileNode(pos)
+        for pos in centers: self.nodes[pos] = TileNode(pos, self.collision_sprites)
 
     def astar(self, target):
         """
@@ -63,6 +67,7 @@ class Tileosaur(Creature):
                         neighbour = self.nodes[pos]
                         if neighbour.colliderect(self.rect):
                             return [self.rect]
+
                 if current_node.center == self.rect.center:       # incase target ends up at same location as sprite
                     path.append(current_node)
                     break
@@ -73,11 +78,14 @@ class Tileosaur(Creature):
                 break
 
             for dx, dy in offsets:
-                path_cost = TILE_SIZE               # movement cost, needs work
-                if (dx, dy) in offsets[:4]:         # diagonal offsets
-                    path_cost = TILE_SIZE * 1.414   # cost more to move to
+                pos = (current_node.centerx + dx, current_node.centery + dy)
+                if pos in self.nodes:
+                    neighbour = self.nodes[pos]
+                else: continue
 
-                neighbour = self.nodes[(current_node.centerx + dx, current_node.centery + dy)]
+                path_cost = TILE_SIZE + neighbour.sprite.tile_cost if neighbour.sprite else TILE_SIZE
+                if (dx, dy) in offsets[:4] and path_cost != math.inf:         # diagonal offsets
+                    path_cost *= 1.414   # cost more to move to
                 if neighbour.center in closed_set:
                     continue
                 # if node's cost can be updated to lower it through new path then do that
@@ -88,6 +96,8 @@ class Tileosaur(Creature):
                 heapq.heappush(open_set, (neighbour.total_cost(), neighbour))   # enable it to be explored later
 
         path.reverse()      # to trace it from self to target
+        # for pa in path: print(pa.total_cost(), end=' ')
+        # print()
         return path
 
     def get_direction(self, target):
@@ -123,12 +133,18 @@ class Tileosaur(Creature):
 
 class TileNode(pg.FRect):
     """Nodes used for pathfinding through A*"""
-    def __init__(self, pos):
+    def __init__(self, pos, collision_sprites):
         super().__init__(pos, (5, 5))
         self.center         = pos
         self.parent         = None
         self.cost           = math.inf    # cost from initial point, i.e, g(n)
         self.distance_cost  = math.inf    # cost to target, i.e, h(n)
+
+        self.sprite = None
+        for sprite in collision_sprites:
+            if self.colliderect(sprite.rect):
+                self.sprite = sprite
+                break
 
     def total_cost(self):
         """Returns total cost of node, i.e, f(n)"""
