@@ -7,14 +7,14 @@ class Player(pg.sprite.Sprite):
         super().__init__(groups)
 
         # base settings
-        self.image = surf
-        self.rect  = self.image.get_frect(topleft=pos)
+        self.image   = surf
+        self.rect    = self.image.get_frect(topleft=pos)
         self.old_pos = self.rect.center
 
         # movement attributes
-        self.speed      = 4 # tiles per second
+        self.speed          = 4 # tiles per second
         self.movement_timer = Timer(1000 / self.speed) # cover 1 tile every 250ms
-        self.direction  = pg.Vector2()
+        self.direction      = pg.Vector2()
 
         # collision
         self.collision_sprites = collision_sprites
@@ -38,11 +38,8 @@ class Player(pg.sprite.Sprite):
             if self.direction: self.movement_timer.activate() # reactivates timer
 
     def collision(self):
-        if self.rect.center in self.collision_sprites:
-            sprite = self.collision_sprites[self.rect.center]
-
-            # only prevent movement if you can't pass through
-            if not sprite.is_passable:
+        for sprite in self.collision_sprites:
+            if sprite.rect.center == self.rect.center and not sprite.is_passable:
                 self.rect.center = self.old_pos
 
     def update(self, dt):

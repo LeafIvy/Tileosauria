@@ -42,10 +42,10 @@ class Tileosaur(Creature):
 
         current_node        = self.nodes[self.rect.center]     # node at sprite position
         current_node.cost   = 0
-        start               = current_node    # for referencing first node later
-        open_set            = []       # list of contacted nodes
-        closed_set          = set()  # list of fully explored nodes
-        path                = []   # list of nodes tracing from target to self
+        open_set            = []                               # list of contacted nodes
+        closed_set          = set()                            # list of fully explored nodes
+        path                = []                               # list of nodes tracing from target to self
+
         heapq.heappush(open_set, (current_node.total_cost(), current_node))
 
         offsets = [(TILE_SIZE, TILE_SIZE), (TILE_SIZE, -TILE_SIZE),                         # List of offsets to
@@ -57,18 +57,26 @@ class Tileosaur(Creature):
             closed_set.add(current_node.center)             # mark it as explored
 
             if current_node.center == target.center:
-                if current_node == start:       # incase target ends up at same location as sprite
+                for dx, dy in offsets:
+                    pos = (current_node.centerx + dx, current_node.centery + dy)
+                    if pos in self.nodes:
+                        neighbour = self.nodes[pos]
+                        if neighbour.colliderect(self.rect):
+                            return [self.rect]
+                if current_node.center == self.rect.center:       # incase target ends up at same location as sprite
                     path.append(current_node)
                     break
+
                 while current_node.center != self.rect.center:      # when target is not at sprite's location
                     path.append(current_node)                       # trace back to start node
                     current_node = current_node.parent
                 break
 
             for dx, dy in offsets:
-                path_cost = TILE_SIZE       # movement cost, needs work
+                path_cost = TILE_SIZE               # movement cost, needs work
                 if (dx, dy) in offsets[:4]:         # diagonal offsets
                     path_cost = TILE_SIZE * 1.414   # cost more to move to
+
                 neighbour = self.nodes[(current_node.centerx + dx, current_node.centery + dy)]
                 if neighbour.center in closed_set:
                     continue
@@ -110,7 +118,7 @@ class Tileosaur(Creature):
         """Updates sprite values"""
         self.nodes.clear()      # clear and create new nodes every frame for dynamic pathfinding
         self.create_nodes()
-        # self.get_direction(self.player.rect)
+        self.get_direction(self.player.rect)
         self.move_delay.update()
 
 class TileNode(pg.FRect):
@@ -119,7 +127,7 @@ class TileNode(pg.FRect):
         super().__init__(pos, (5, 5))
         self.center         = pos
         self.parent         = None
-        self.cost           = math.inf   # cost from initial point, i.e, g(n)
+        self.cost           = math.inf    # cost from initial point, i.e, g(n)
         self.distance_cost  = math.inf    # cost to target, i.e, h(n)
 
     def total_cost(self):
