@@ -41,8 +41,7 @@ class Tileosaur(Creature):
         """
         if target.center not in self.nodes: return [self.rect]  # don't move if target is outside of range
 
-        for node in self.nodes.values(): node.distance_cost = ((node.centerx - target.centerx) ** 2
-                                                               + (node.centery - target.centery) ** 2)
+        self._initialize_nodes(target)
 
         current_node        = self.nodes[self.rect.center]     # node at sprite position
         current_node.cost   = 0
@@ -84,7 +83,7 @@ class Tileosaur(Creature):
                 else: continue
 
                 path_cost = TILE_SIZE + neighbour.sprite.tile_cost if neighbour.sprite else TILE_SIZE
-                if (dx, dy) in offsets[:4] and path_cost != math.inf:         # diagonal offsets
+                if (dx, dy) in offsets[:4]:         # diagonal offsets
                     path_cost *= 1.414   # cost more to move to
                 if neighbour.center in closed_set:
                     continue
@@ -93,15 +92,27 @@ class Tileosaur(Creature):
                 if (neighbour.total_cost()) > (current_node.cost + path_cost + neighbour.distance_cost):
                     neighbour.cost   = current_node.cost + path_cost
                     neighbour.parent = current_node
-                heapq.heappush(open_set, (neighbour.total_cost(), neighbour))   # enable it to be explored later
+                    heapq.heappush(open_set, (neighbour.total_cost(), neighbour))   # enable it to be explored later
 
         path.reverse()      # to trace it from self to target
-        # for pa in path: print(pa.total_cost(), end=' ')
-        # print()
         return path
 
+    def _initialize_nodes(self, target):
+        """Reset node costs and assign them their distance cost"""
+        for node in self.nodes.copy().values():
+            if node.sprite:
+                # Remove nodes that overlap sprites with inf tile cost
+                # This excludes those sprites from path-tracking
+                if node.sprite.tile_cost == math.inf and node.center != self.rect.center:
+                    self.nodes.pop(node.center)
+                    continue
+            node.parent = None
+            node.cost = math.inf
+            # Calculate Chebyshev distance
+            node.distance_cost = max(abs(node.centerx - target.centerx), abs(node.centery-target.centery)) // TILE_SIZE
+
     def get_direction(self, target):
-        direction_node = self.astar(target)[0]      # get next node to move to
+        direction_node = self.astar(target)[0]
 
         # move in the direction of the next node or stand still
         if direction_node.centerx < self.rect.centerx: self.direction.x = -1
@@ -111,6 +122,10 @@ class Tileosaur(Creature):
         if direction_node.centery < self.rect.centery: self.direction.y = -1
         elif direction_node.centery > self.rect.centery: self.direction.y = 1
         else: self.direction.y = 0
+
+        if self.direction.magnitude() >= 1:
+            self.nodes.clear()  # clear and create new nodes every time sprite moves for dynamic pathfinding
+            self.create_nodes()
 
         # normalizing diagonal movement speed
         if self.direction.magnitude() > 1:
@@ -126,8 +141,6 @@ class Tileosaur(Creature):
 
     def update(self, _):
         """Updates sprite values"""
-        self.nodes.clear()      # clear and create new nodes every frame for dynamic pathfinding
-        self.create_nodes()
         self.get_direction(self.player.rect)
         self.move_delay.update()
 
