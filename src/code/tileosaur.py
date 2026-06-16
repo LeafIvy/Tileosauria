@@ -1,7 +1,7 @@
-import heapq
-
 from src.utils import *
 from .creature import Creature
+
+import heapq
 
 
 class Tileosaur(Creature):
@@ -74,13 +74,14 @@ class Tileosaur(Creature):
         """Reset node costs and assign them their distance cost"""
         for node in self.nodes.copy().values():
             if node.sprite:
+
                 # Remove nodes that overlap sprites with inf tile cost
                 # This excludes those sprites from path-tracking
                 if node.sprite.tile_cost == math.inf and node.center != self.rect.center:
                     self.nodes.pop(node.center)
                     continue
-            node.parent = None
-            node.cost = math.inf
+            node.reset()
+
             # Calculate Chebyshev distance
             node.distance_cost = max(abs(node.centerx - target.centerx), abs(node.centery-target.centery)) // TILE_SIZE
 
@@ -135,13 +136,7 @@ class Tileosaur(Creature):
         direction_node = self.astar(target)[0]
 
         # move in the direction of the next node or stand still
-        if direction_node.centerx < self.rect.centerx: self.direction.x = -1
-        elif direction_node.centerx > self.rect.centerx: self.direction.x = 1
-        else: self.direction.x = 0
-
-        if direction_node.centery < self.rect.centery: self.direction.y = -1
-        elif direction_node.centery > self.rect.centery: self.direction.y = 1
-        else: self.direction.y = 0
+        self.direction = (pg.Vector2(direction_node.center) - pg.Vector2(self.rect.center)) // TILE_SIZE
 
         if self.direction.magnitude() >= 1:
             self.nodes.clear()  # clear and create new nodes every time sprite moves for dynamic pathfinding
@@ -178,6 +173,11 @@ class TileNode(pg.FRect):
             if self.colliderect(sprite.rect):
                 self.sprite = sprite
                 break
+
+    def reset(self):
+        self.parent = None
+        self.cost = math.inf
+        self.distance_cost = math.inf
 
     def total_cost(self):
         """Returns total cost of node, i.e, f(n)"""
