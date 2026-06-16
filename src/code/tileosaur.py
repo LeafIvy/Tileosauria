@@ -59,40 +59,13 @@ class Tileosaur(Creature):
             _, current_node = heapq.heappop(open_set)       # choose node with lowest cost
             closed_set.add(current_node.center)             # mark it as explored
 
+
+            # Get the list of nodes from goal to self and exit the loop
             if current_node.center == target.center:
-                for dx, dy in offsets:
-                    pos = (current_node.centerx + dx, current_node.centery + dy)
-                    if pos in self.nodes:
-                        neighbour = self.nodes[pos]
-                        if neighbour.colliderect(self.rect):
-                            return [self.rect]
+                path = self._get_path(current_node, offsets)
+                if path: break
 
-                if current_node.center == self.rect.center:       # incase target ends up at same location as sprite
-                    path.append(current_node)
-                    break
-
-                while current_node.center != self.rect.center:      # when target is not at sprite's location
-                    path.append(current_node)                       # trace back to start node
-                    current_node = current_node.parent
-                break
-
-            for dx, dy in offsets:
-                pos = (current_node.centerx + dx, current_node.centery + dy)
-                if pos in self.nodes:
-                    neighbour = self.nodes[pos]
-                else: continue
-
-                path_cost = TILE_SIZE + neighbour.sprite.tile_cost if neighbour.sprite else TILE_SIZE
-                if (dx, dy) in offsets[:4]:         # diagonal offsets
-                    path_cost *= 1.414   # cost more to move to
-                if neighbour.center in closed_set:
-                    continue
-                # if node's cost can be updated to lower it through new path then do that
-                # here, current_node.cost + path_cost is g(n)
-                if (neighbour.total_cost()) > (current_node.cost + path_cost + neighbour.distance_cost):
-                    neighbour.cost   = current_node.cost + path_cost
-                    neighbour.parent = current_node
-                    heapq.heappush(open_set, (neighbour.total_cost(), neighbour))   # enable it to be explored later
+            self._explore_neighbours(current_node, offsets, open_set, closed_set)
 
         path.reverse()      # to trace it from self to target
         return path
@@ -110,6 +83,53 @@ class Tileosaur(Creature):
             node.cost = math.inf
             # Calculate Chebyshev distance
             node.distance_cost = max(abs(node.centerx - target.centerx), abs(node.centery-target.centery)) // TILE_SIZE
+
+    def _get_path(self, current_node, offsets):
+        """Returns list of nodes leading from target to self"""
+        path = []
+
+        # If target is adjacent to self then don't move
+        for dx, dy in offsets:
+            pos = (current_node.centerx + dx, current_node.centery + dy)
+            if pos in self.nodes:
+                neighbour = self.nodes[pos]
+                if neighbour.colliderect(self.rect):
+                    path.append(self.rect)
+                    return path
+
+        # If target coincides with self then don't move
+        if current_node.center == self.rect.center:
+            path.append(current_node)
+            return path
+
+        # Else, get all the nodes leading from target back to self
+        while current_node.center != self.rect.center:
+            path.append(current_node)
+            current_node = current_node.parent
+        return path
+
+    def _explore_neighbours(self, current_node, offsets, open_set, closed_set):
+        """Explore the neighbouring nodes and assign them a cost and mark add them into open set"""
+        for dx, dy in offsets:
+            pos = (current_node.centerx + dx, current_node.centery + dy)
+            if pos in self.nodes:
+                neighbour = self.nodes[pos]
+            else:
+                continue
+
+            path_cost = TILE_SIZE + neighbour.sprite.tile_cost if neighbour.sprite else TILE_SIZE
+            if (dx, dy) in offsets[:4]:  # diagonal offsets
+                path_cost *= 1.414  # cost more to move to
+
+            if neighbour.center in closed_set:
+                continue
+
+            # if node's cost can be updated to lower it through new path then do that
+            # here, current_node.cost + path_cost is g(n)
+            if (neighbour.total_cost()) > (current_node.cost + path_cost + neighbour.distance_cost):
+                neighbour.cost = current_node.cost + path_cost
+                neighbour.parent = current_node
+                heapq.heappush(open_set, (neighbour.total_cost(), neighbour))  # enable it to be explored later
 
     def get_direction(self, target):
         direction_node = self.astar(target)[0]
