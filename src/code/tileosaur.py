@@ -10,7 +10,6 @@ class Tileosaur(Creature):
         super().__init__(surf, pos, groups)
 
         self.collision_sprites = collision_sprites
-        self.tile_cost = math.inf
 
         # movement
         self.speed          = 3
@@ -73,13 +72,6 @@ class Tileosaur(Creature):
     def _initialize_nodes(self, target):
         """Reset node costs and assign them their distance cost"""
         for node in self.nodes.copy().values():
-            if node.sprite:
-
-                # Remove nodes that overlap sprites with inf tile cost
-                # This excludes those sprites from path-tracking
-                if node.sprite.tile_cost == math.inf and node.center != self.rect.center:
-                    self.nodes.pop(node.center)
-                    continue
             node.reset()
 
             # Calculate Chebyshev distance
@@ -113,24 +105,25 @@ class Tileosaur(Creature):
         """Explore the neighbouring nodes and assign them a cost and mark add them into open set"""
         for dx, dy in offsets:
             pos = (current_node.centerx + dx, current_node.centery + dy)
-            if pos in self.nodes:
-                neighbour = self.nodes[pos]
-            else:
-                continue
+            if pos in self.nodes: neighbour = self.nodes[pos]
+            else: continue
 
-            path_cost = TILE_SIZE + neighbour.sprite.tile_cost if neighbour.sprite else TILE_SIZE
-            if (dx, dy) in offsets[:4]:  # diagonal offsets
-                path_cost *= 1.414  # cost more to move to
+            path_cost = TILE_SIZE
+            if (dx, dy) in offsets[:4]: path_cost *= 1.414       # Diagonal paths cost more
 
-            if neighbour.center in closed_set:
-                continue
+            if neighbour.center in closed_set: continue
 
-            # if node's cost can be updated to lower it through new path then do that
-            # here, current_node.cost + path_cost is g(n)
-            if (neighbour.total_cost()) > (current_node.cost + path_cost + neighbour.distance_cost):
-                neighbour.cost = current_node.cost + path_cost
-                neighbour.parent = current_node
-                heapq.heappush(open_set, (neighbour.total_cost(), neighbour))  # enable it to be explored later
+            self._update_node_cost(neighbour, current_node, path_cost, open_set)
+
+    def _update_node_cost(self, neighbour, current_node, path_cost, open_set):
+        """
+        If node's cost can be updated to lower its cost through new path, then do that
+        Here, current_node.cost + path_cost is g(n)
+        """
+        if (neighbour.total_cost()) > ((current_node.cost + path_cost) + neighbour.distance_cost):
+            neighbour.cost = current_node.cost + path_cost
+            neighbour.parent = current_node
+            heapq.heappush(open_set, (neighbour.total_cost(), neighbour))  # enable it to be explored later
 
     def get_direction(self, target):
         direction_node = self.astar(target)[0]
@@ -138,8 +131,9 @@ class Tileosaur(Creature):
         # move in the direction of the next node or stand still
         self.direction = (pg.Vector2(direction_node.center) - pg.Vector2(self.rect.center)) // TILE_SIZE
 
+        # clear and create new nodes every time sprite moves for dynamic pathfinding
         if self.direction.magnitude() >= 1:
-            self.nodes.clear()  # clear and create new nodes every time sprite moves for dynamic pathfinding
+            self.nodes.clear()
             self.create_nodes()
 
         # normalizing diagonal movement speed
