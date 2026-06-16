@@ -131,11 +131,6 @@ class Tileosaur(Creature):
         # move in the direction of the next node or stand still
         self.direction = (pg.Vector2(direction_node.center) - pg.Vector2(self.rect.center)) // TILE_SIZE
 
-        # clear and create new nodes every time sprite moves for dynamic pathfinding
-        if self.direction.magnitude() >= 1:
-            self.nodes.clear()
-            self.create_nodes()
-
         # normalizing diagonal movement speed
         if self.direction.magnitude() > 1:
             if self.move_delay.duration  == self.initial_delay:
@@ -147,6 +142,11 @@ class Tileosaur(Creature):
         """Moves sprite in the direction it's pointing"""
         self.rect.x += TILE_SIZE * self.direction.x
         self.rect.y += TILE_SIZE * self.direction.y
+
+        # clear and create new nodes every time sprite moves for dynamic pathfinding
+        if self.direction.magnitude() >= 1:
+            self.nodes.clear()
+            self.create_nodes()
 
     def update(self, _):
         """Updates sprite values"""
