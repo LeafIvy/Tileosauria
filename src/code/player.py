@@ -38,8 +38,9 @@ class Player(pg.sprite.Sprite):
             if self.direction: self.movement_timer.activate() # reactivates timer
 
     def collision(self):
+        """Move back to original position if collision occurs"""
         for sprite in self.collision_sprites:
-            if sprite.rect.center == self.rect.center and not sprite.is_passable:
+            if sprite.rect.center == self.rect.center:
                 self.rect.center = self.old_pos
 
     def update(self, dt):
