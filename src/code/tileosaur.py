@@ -19,7 +19,11 @@ class Tileosaur(Creature):
         self.direction      = pg.Vector2()
 
         #pathfinding
-        self.range = 5
+        self.OFFSETS = [(TILE_SIZE, TILE_SIZE), (TILE_SIZE, -TILE_SIZE),                         # List of offsets to
+                        (-TILE_SIZE, TILE_SIZE), (-TILE_SIZE, -TILE_SIZE), (-TILE_SIZE, 0),      # get position of each
+                        (0, TILE_SIZE), (0, -TILE_SIZE), (TILE_SIZE, 0)]                         # neighbouring node
+        self.DIAGONAL_OFFSETS = self.OFFSETS[:4]
+        self.range = 8
         self.nodes = {}
         self.create_nodes()
 
@@ -50,10 +54,6 @@ class Tileosaur(Creature):
 
         heapq.heappush(open_set, (current_node.total_cost(), current_node))
 
-        offsets = [(TILE_SIZE, TILE_SIZE), (TILE_SIZE, -TILE_SIZE),                         # List of offsets to
-                   (-TILE_SIZE, TILE_SIZE), (-TILE_SIZE, -TILE_SIZE), (-TILE_SIZE, 0),      # get position of each
-                   (0, TILE_SIZE), (0, -TILE_SIZE), (TILE_SIZE, 0)]                         # neighbouring node
-
         while open_set:
             _, current_node = heapq.heappop(open_set)       # choose node with lowest cost
             closed_set.add(current_node.center)             # mark it as explored
@@ -61,10 +61,10 @@ class Tileosaur(Creature):
 
             # Get the list of nodes from goal to self and exit the loop
             if current_node.center == target.center:
-                path = self._get_path(current_node, offsets)
+                path = self._get_path(current_node)
                 if path: break
 
-            self._explore_neighbours(current_node, offsets, open_set, closed_set)
+            self._explore_neighbours(current_node, open_set, closed_set)
 
         path.reverse()      # to trace it from self to target
         return path
@@ -77,12 +77,12 @@ class Tileosaur(Creature):
             # Calculate Chebyshev distance
             node.distance_cost = max(abs(node.centerx - target.centerx), abs(node.centery-target.centery)) // TILE_SIZE
 
-    def _get_path(self, current_node, offsets):
+    def _get_path(self, current_node):
         """Returns list of nodes leading from target to self"""
         path = []
 
         # If target is adjacent to self then don't move
-        for dx, dy in offsets:
+        for dx, dy in self.OFFSETS:
             pos = (current_node.centerx + dx, current_node.centery + dy)
             if pos in self.nodes:
                 neighbour = self.nodes[pos]
@@ -101,15 +101,15 @@ class Tileosaur(Creature):
             current_node = current_node.parent
         return path
 
-    def _explore_neighbours(self, current_node, offsets, open_set, closed_set):
+    def _explore_neighbours(self, current_node, open_set, closed_set):
         """Explore the neighbouring nodes and assign them a cost and mark add them into open set"""
-        for dx, dy in offsets:
+        for dx, dy in self.OFFSETS:
             pos = (current_node.centerx + dx, current_node.centery + dy)
             if pos in self.nodes: neighbour = self.nodes[pos]
             else: continue
 
             path_cost = TILE_SIZE
-            if (dx, dy) in offsets[:4]: path_cost *= 1.414       # Diagonal paths cost more
+            if (dx, dy) in self.DIAGONAL_OFFSETS: path_cost *= 1.414       # Diagonal paths cost more
 
             if neighbour.center in closed_set: continue
 
