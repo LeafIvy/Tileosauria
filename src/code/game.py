@@ -31,8 +31,6 @@ class Game:
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
         podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
         self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
-        self.podia.is_passable = True
-        self.podia.tile_cost = 53 # magic number at which tileosaur starts avoiding obstacle
         self.collision_sprites.add(self.podia)
 
         # grid
