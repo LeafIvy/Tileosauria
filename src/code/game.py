@@ -15,6 +15,7 @@ class Game:
         self.screen     = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock      = pg.time.Clock()
         self.running    = True
+        self.world = WorldGen(512)
         pg.display.set_caption(TITLE)
 
         # sprite groups
