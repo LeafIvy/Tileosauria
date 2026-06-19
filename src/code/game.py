@@ -3,6 +3,7 @@ from .player import Player
 from .tileosaur import Tileosaur
 from .tileopodium import Tileopodium
 from src.utils.groups import AllSprites
+from worldgen import WorldGen
 
 
 class Game:
