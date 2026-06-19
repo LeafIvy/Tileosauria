@@ -34,8 +34,10 @@ class Game:
         self.collision_sprites.add(self.podia)
 
         # grid
-        self.vertical_lines     = [[(i, 0), (i, WINDOW_HEIGHT)] for i in range(-32, WINDOW_WIDTH, TILE_SIZE)]
-        self.horizontal_lines   = [[(0, i), (WINDOW_WIDTH, i)] for i in range(7, WINDOW_HEIGHT, TILE_SIZE)]
+        self.vertical_lines     = [[(i, 0), (i, WINDOW_HEIGHT)] for i in
+                                   range(int(WINDOW_WIDTH/2 - TILE_SIZE/2 - TILE_SIZE * 10), WINDOW_WIDTH, TILE_SIZE)]
+        self.horizontal_lines   = [[(0, i), (WINDOW_WIDTH, i)] for i in
+                                   range(int(WINDOW_HEIGHT/2 - TILE_SIZE/2 - TILE_SIZE * 10), WINDOW_HEIGHT, TILE_SIZE)]
         self.grid               = self.vertical_lines + self.horizontal_lines
 
     def run(self):
