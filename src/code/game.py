@@ -3,7 +3,7 @@ from .player import Player
 from .tileosaur import Tileosaur
 from .tileopodium import Tileopodium
 from src.utils.groups import AllSprites
-from worldgen import WorldGen
+from .worldgen import WorldGen
 
 
 class Game:
@@ -16,6 +16,7 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(512)
+        self.world.generate_perlin_noise()
         pg.display.set_caption(TITLE)
 
         # sprite groups
@@ -53,6 +54,10 @@ class Game:
 
             # draw calls
             self.screen.fill(BG_COLOR)
+            for pos, tile in self.world:
+                tile.rect.center += self.all_sprites.offset
+                pg.draw.rect(self.screen, tile.color, tile.rect)
+                tile.rect.topleft = (pos[0] * TILE_SIZE, pos[1] * TILE_SIZE)
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid

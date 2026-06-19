@@ -21,14 +21,18 @@ class WorldGen:
                     dy,
                     octaves=octaves,
                     persistence=persistance,
-                    lacunarity=lacunarity
+                    lacunarity=lacunarity,
+                    base=69
                 )
                 if noise_value < -0.5:
                     color = 'blue'
-                else: color = 'green'
-                self.world[(x, y)] = Tile((x, y), (TILE_SIZE, TILE_SIZE), color)
+                else: color = 'black'
+                self.world[(x, y)] = Tile((x, y), color)
 
-class Tile(pg.FRect):
-    def __init__(self, pos, size, color):
-        super().__init__(pos, size)
+class Tile:
+    def __init__(self, pos, color):
+        self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.rect = self.image.get_frect(topleft=pos)
+        self.rect.centerx *= TILE_SIZE
+        self.rect.centery *= TILE_SIZE
         self.color = color
