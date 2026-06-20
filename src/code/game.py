@@ -23,8 +23,6 @@ class Game:
         # sprite groups
         self.all_sprites = AllSprites()
         self.collision_sprites = set()
-        self.tile_sprites = pg.sprite.Group()
-        self.world.generate_perlin_noise(self.tile_sprites)
 
         # player setup
         self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), self.collision_sprites)
@@ -60,13 +58,6 @@ class Game:
 
             # draw calls
             self.screen.fill(BG_COLOR)
-            for row in self.world:
-                for tile in row:
-                    if (self.player.view_left - TILE_SIZE * 3 <= tile.rect.x <= self.player.view_right + TILE_SIZE * 3
-                    and self.player.view_top - TILE_SIZE * 3 <= tile.rect.y <= self.player.view_bottom + TILE_SIZE * 3):
-                        if tile not in self.all_sprites: self.all_sprites.add(tile)
-                    else:
-                        if tile in self.all_sprites: tile.remove(self.all_sprites)
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid
