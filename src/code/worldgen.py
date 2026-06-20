@@ -88,11 +88,11 @@ class Chunk(pg.sprite.Sprite):
 
         self.chunk = chunk
         self.origin = chunk[0][0].rect.topleft
+        self.adjustment_offset = pg.Vector2(*self.origin)
         self.chunk_size = 16
         self.image = pg.Surface((self.chunk_size * TILE_SIZE, self.chunk_size * TILE_SIZE))
         blit_sequence = []
         for row in chunk:
             for tile in row:
-                blit_sequence.append((tile.image, tile.rect.topleft))
+                blit_sequence.append((tile.image, tile.rect.topleft - self.adjustment_offset))
         self.image.blits(blit_sequence)
-        self.image.scroll(*self.origin)
