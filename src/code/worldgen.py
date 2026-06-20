@@ -3,26 +3,29 @@ import noise
 from src.utils import *
 
 
+DEEP_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+DEEP_WATER_SURF.fill('#0f5e9c')
+
+SHALLOW_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+SHALLOW_WATER_SURF.fill('#1ca3ec')
+
+SAND_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+SAND_SURF.fill('#CBBD93')
+
+GRASS_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+GRASS_SURF.fill('#7CFC00')
+
+SURFS = (DEEP_WATER_SURF, SHALLOW_WATER_SURF, SAND_SURF, GRASS_SURF)
+
+
 class WorldGen:
     def __init__(self, size):
         self.size = size
-        self.world = []
+        self.tiles_grid = []
         self.chunks = []
 
-        self.DEEP_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.DEEP_WATER_SURF.fill('#0f5e9c')
-
-        self.SHALLOW_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.SHALLOW_WATER_SURF.fill('#1ca3ec')
-
-        self.SAND_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.SAND_SURF.fill('#CBBD93')
-
-        self.GRASS_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.GRASS_SURF.fill('#7CFC00')
-
     def __iter__(self):
-        return iter(self.world)
+        return iter(self.tiles_grid)
 
     def generate_perlin_noise(self, groups, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0):
         for y in range(self.size):
@@ -39,14 +42,14 @@ class WorldGen:
                     base=91
                 )
                 if noise_value <= -0.2:
-                    surf = self.DEEP_WATER_SURF
+                    tile_id = 0
                 elif noise_value <= -0.15:
-                    surf = self.SHALLOW_WATER_SURF
+                    tile_id = 1
                 elif noise_value <= -0.1:
-                    surf = self.SAND_SURF
-                else: surf = self.GRASS_SURF
-                row.append(Tile(surf, (x, y), groups))
-            self.world.append(row)
+                    tile_id = 2
+                else: tile_id = 3
+                row.append(tile_id)
+            self.tiles_grid.append(row)
 
     def generate_chunks(self):
         chunk_size = 16
@@ -54,8 +57,9 @@ class WorldGen:
         while current_y < self.size:
             while current_x < self.size:
                 chunk = []
+                origin = (current_x * TILE_SIZE, current_y * TILE_SIZE)
                 counter_y = 0
-                for row in self.world[current_y:]:
+                for row in self.tiles_grid[current_y:]:
                     tiles = []
                     counter_x = 0
                     for tile in row[current_x:]:
@@ -69,30 +73,20 @@ class WorldGen:
                     if counter_y == chunk_size:
                         counter_y = 0
                         break
-                self.chunks.append(Chunk(chunk))
+                self.chunks.append(Chunk(chunk, origin))
                 current_x += chunk_size
             current_x = 0
             current_y += chunk_size
 
-class Tile(pg.sprite.Sprite):
-    def __init__(self, surf, pos, groups):
-        super().__init__(groups)
-        self.image = surf
-        self.rect = self.image.get_frect(topleft=pos)
-        self.rect.x *= TILE_SIZE
-        self.rect.y *= TILE_SIZE
-
 class Chunk(pg.sprite.Sprite):
-    def __init__(self, chunk):
+    def __init__(self, chunk, origin):
         pg.sprite.Sprite.__init__(self)
 
-        self.chunk = chunk
-        self.origin = chunk[0][0].rect.topleft
-        self.adjustment_offset = pg.Vector2(*self.origin)
-        self.chunk_size = 16
-        self.image = pg.Surface((self.chunk_size * TILE_SIZE, self.chunk_size * TILE_SIZE))
+        self.origin = origin
+        self.image = pg.Surface((chunk_size * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
         blit_sequence = []
-        for row in chunk:
-            for tile in row:
-                blit_sequence.append((tile.image, tile.rect.topleft - self.adjustment_offset))
+        for y, row in enumerate(chunk):
+            for x, tile_id in enumerate(row):
+                blit_sequence.append((SURFS[tile_id], (x * TILE_SIZE, y * TILE_SIZE)))
+
         self.image.blits(blit_sequence)

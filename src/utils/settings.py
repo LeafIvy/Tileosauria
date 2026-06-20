@@ -10,4 +10,5 @@ TITLE = 'Tileosauria'
 
 # screen settings
 TILE_SIZE = 64
+CHUNK_SIZE = 16
 BG_COLOR = 'white'
