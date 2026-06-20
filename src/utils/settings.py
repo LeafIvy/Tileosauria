@@ -9,7 +9,7 @@ FPS = 120
 TITLE = 'Tileosauria'
 
 # world settings
-TILE_SIZE = 8
+TILE_SIZE = 32
 CHUNK_SIZE = 32
-WORLD_SIZE = 1024
+WORLD_SIZE = 512
 BG_COLOR = 'white'

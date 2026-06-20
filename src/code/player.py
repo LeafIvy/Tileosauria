@@ -13,7 +13,7 @@ class Player(pg.sprite.Sprite):
         self.old_pos = self.rect.center
 
         # movement attributes
-        self.speed          = 50 # tiles per second
+        self.speed          = 4 # tiles per second
         self.base_delay     = 1000 / self.speed
         self.movement_timer = Timer(self.base_delay) # cover 1 tile every 250ms
         self.direction      = pg.Vector2()

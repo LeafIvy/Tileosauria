@@ -17,7 +17,7 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(WORLD_SIZE)
-        self.world.generate_perlin_noise(512, base=randint(0, 169))
+        self.world.generate_perlin_noise(base=randint(0, 169))
         self.world.generate_chunks()
         pg.display.set_caption(TITLE)
 
@@ -31,13 +31,13 @@ class Game:
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
-        self.saur = Tileosaur(saur_surf, (50*TILE_SIZE, 8*TILE_SIZE), self.player, self.collision_sprites)
+        self.saur = Tileosaur(saur_surf, (100*TILE_SIZE, 100*TILE_SIZE), self.player, self.collision_sprites)
         self.all_sprites.add(self.saur, layer=1)
         self.collision_sprites.add(self.saur)
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
         podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
-        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE))
+        self.podia = Tileopodium(podia_surf, (100*TILE_SIZE, 104*TILE_SIZE))
         self.all_sprites.add(self.podia, layer=1)
         self.collision_sprites.add(self.podia)
 
@@ -49,6 +49,7 @@ class Game:
         self.grid               = self.vertical_lines + self.horizontal_lines
 
     def draw_chunks(self):
+        """Draw only those chunks which are near the player/visible onscreen"""
         visible_chunks = []
         for chunk in self.world:
             if (self.player.view_left - TILE_SIZE * CHUNK_SIZE - TILE_SIZE <= chunk.origin[0] <= self.player.view_right + TILE_SIZE
@@ -71,7 +72,7 @@ class Game:
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid
-            for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
+            # for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
 
             # update calls
             self.all_sprites.update(dt)
