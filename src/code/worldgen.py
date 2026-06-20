@@ -9,6 +9,18 @@ class WorldGen:
         self.world = []
         self.chunks = []
 
+        self.DEEP_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.DEEP_WATER_SURF.fill('#0f5e9c')
+
+        self.SHALLOW_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.SHALLOW_WATER_SURF.fill('#1ca3ec')
+
+        self.SAND_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.SAND_SURF.fill('#CBBD93')
+
+        self.GRASS_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.GRASS_SURF.fill('#7CFC00')
+
     def __iter__(self):
         return iter(self.world)
 
@@ -27,13 +39,13 @@ class WorldGen:
                     base=91
                 )
                 if noise_value <= -0.2:
-                    color = '#0f5e9c'
+                    surf = self.DEEP_WATER_SURF
                 elif noise_value <= -0.15:
-                    color = '#1ca3ec'
+                    surf = self.SHALLOW_WATER_SURF
                 elif noise_value <= -0.1:
-                    color = '#CBBD93'
-                else: color = '#7CFC00'
-                row.append(Tile((x, y), color, groups))
+                    surf = self.SAND_SURF
+                else: surf = self.GRASS_SURF
+                row.append(Tile(surf, (x, y), groups))
             self.world.append(row)
 
     def generate_chunks(self):
@@ -63,14 +75,12 @@ class WorldGen:
             current_y += chunk_size
 
 class Tile(pg.sprite.Sprite):
-    def __init__(self, pos, color, groups):
+    def __init__(self, surf, pos, groups):
         super().__init__(groups)
-        self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.image.fill(color)
+        self.image = surf
         self.rect = self.image.get_frect(topleft=pos)
         self.rect.x *= TILE_SIZE
         self.rect.y *= TILE_SIZE
-        self.color = color
 
 class Chunk(pg.sprite.Sprite):
     def __init__(self, chunk):
