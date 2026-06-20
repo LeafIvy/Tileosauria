@@ -43,9 +43,9 @@ class Game:
 
         # grid
         self.vertical_lines     = [[(i, 0), (i, WINDOW_HEIGHT)] for i in
-                                   range(int(WINDOW_WIDTH/2 - TILE_SIZE/2 - TILE_SIZE * 10), WINDOW_WIDTH, TILE_SIZE)]
+                                   range(int(WINDOW_WIDTH/2 - TILE_SIZE/2 - TILE_SIZE * 100), WINDOW_WIDTH, TILE_SIZE)]
         self.horizontal_lines   = [[(0, i), (WINDOW_WIDTH, i)] for i in
-                                   range(int(WINDOW_HEIGHT/2 - TILE_SIZE/2 - TILE_SIZE * 10), WINDOW_HEIGHT, TILE_SIZE)]
+                                   range(int(WINDOW_HEIGHT/2 - TILE_SIZE/2 - TILE_SIZE * 100), WINDOW_HEIGHT, TILE_SIZE)]
         self.grid               = self.vertical_lines + self.horizontal_lines
 
     def draw_chunks(self):
@@ -74,7 +74,7 @@ class Game:
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid
-            # for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
+            for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
 
             # update calls
             self.all_sprites.update(dt)
