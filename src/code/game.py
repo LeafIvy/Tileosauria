@@ -16,12 +16,13 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(512)
-        self.world.generate_perlin_noise()
         pg.display.set_caption(TITLE)
 
         # sprite groups
         self.all_sprites = AllSprites()
         self.collision_sprites = set()
+        self.tile_sprites = pg.sprite.Group()
+        self.world.generate_perlin_noise(self.tile_sprites)
 
         # player setup
         self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,), self.collision_sprites)

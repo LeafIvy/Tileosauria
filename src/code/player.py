@@ -8,6 +8,7 @@ class Player(pg.sprite.Sprite):
 
         # base settings
         self.image   = surf
+        self.image.fill('purple')
         self.rect    = self.image.get_frect(topleft=pos)
         self.old_pos = self.rect.center
 
