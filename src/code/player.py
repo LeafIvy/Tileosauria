@@ -13,8 +13,9 @@ class Player(pg.sprite.Sprite):
         self.old_pos = self.rect.center
 
         # movement attributes
-        self.speed          = 4 # tiles per second
-        self.movement_timer = Timer(1000 / self.speed) # cover 1 tile every 250ms
+        self.speed          = 50 # tiles per second
+        self.base_delay     = 1000 / self.speed
+        self.movement_timer = Timer(self.base_delay) # cover 1 tile every 250ms
         self.direction      = pg.Vector2()
 
         # collision
@@ -35,8 +36,8 @@ class Player(pg.sprite.Sprite):
         self.direction.x = int(keys[pg.K_d]) - int(keys[pg.K_a])
         self.direction.y = int(keys[pg.K_s]) - int(keys[pg.K_w])
         # slow down diagonal movement
-        if self.direction.magnitude() > 1: self.movement_timer.duration = 1.414 * 250
-        else: self.movement_timer.duration = 250
+        if self.direction.magnitude() > 1: self.movement_timer.duration = 1.414 * self.base_delay
+        else: self.movement_timer.duration = self.base_delay
 
     def move(self, dt):
         """Alter position of player rect"""

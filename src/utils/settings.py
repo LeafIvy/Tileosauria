@@ -8,7 +8,8 @@ WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
 FPS = 120
 TITLE = 'Tileosauria'
 
-# screen settings
-TILE_SIZE = 64
-CHUNK_SIZE = 16
+# world settings
+TILE_SIZE = 8
+CHUNK_SIZE = 32
+WORLD_SIZE = 1024
 BG_COLOR = 'white'

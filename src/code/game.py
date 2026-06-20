@@ -4,6 +4,7 @@ from .tileosaur import Tileosaur
 from .tileopodium import Tileopodium
 from src.utils.groups import AllSprites
 from .worldgen import WorldGen
+from random import randint
 
 
 class Game:
@@ -15,8 +16,8 @@ class Game:
         self.screen     = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock      = pg.time.Clock()
         self.running    = True
-        self.world = WorldGen(512)
-        self.world.generate_perlin_noise(512)
+        self.world = WorldGen(WORLD_SIZE)
+        self.world.generate_perlin_noise(512, base=randint(0, 169))
         self.world.generate_chunks()
         pg.display.set_caption(TITLE)
 
@@ -25,12 +26,12 @@ class Game:
         self.collision_sprites = set()
 
         # player setup
-        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), self.collision_sprites)
+        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (100 * TILE_SIZE, 105 * TILE_SIZE), self.collision_sprites)
         self.all_sprites.add(self.player, layer=1)
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
-        self.saur = Tileosaur(saur_surf, (3*TILE_SIZE, 2*TILE_SIZE), self.player, self.collision_sprites)
+        self.saur = Tileosaur(saur_surf, (50*TILE_SIZE, 8*TILE_SIZE), self.player, self.collision_sprites)
         self.all_sprites.add(self.saur, layer=1)
         self.collision_sprites.add(self.saur)
 
@@ -47,6 +48,14 @@ class Game:
                                    range(int(WINDOW_HEIGHT/2 - TILE_SIZE/2 - TILE_SIZE * 10), WINDOW_HEIGHT, TILE_SIZE)]
         self.grid               = self.vertical_lines + self.horizontal_lines
 
+    def draw_chunks(self):
+        visible_chunks = []
+        for chunk in self.world:
+            if (self.player.view_left - TILE_SIZE * CHUNK_SIZE - TILE_SIZE <= chunk.origin[0] <= self.player.view_right + TILE_SIZE
+            and self.player.view_top - TILE_SIZE * CHUNK_SIZE - TILE_SIZE <= chunk.origin[1] <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
+                visible_chunks.append((chunk.image, chunk.origin + self.all_sprites.offset))
+        self.screen.blits(visible_chunks)
+
     def run(self):
         """Starts the game loop"""
         while self.running:
@@ -58,6 +67,7 @@ class Game:
 
             # draw calls
             self.screen.fill(BG_COLOR)
+            self.draw_chunks()
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid

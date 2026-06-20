@@ -3,11 +3,14 @@ import noise
 from src.utils import *
 
 
-DEEP_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-DEEP_WATER_SURF.fill('#0f5e9c')
+WATER_0_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+WATER_0_SURF.fill('#0f5e9c')
 
-SHALLOW_WATER_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
-SHALLOW_WATER_SURF.fill('#1ca3ec')
+WATER_1_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+WATER_1_SURF.fill('#2389da')
+
+WATER_2_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
+WATER_2_SURF.fill('#1ca3ec')
 
 SAND_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
 SAND_SURF.fill('#CBBD93')
@@ -15,7 +18,7 @@ SAND_SURF.fill('#CBBD93')
 GRASS_SURF = pg.Surface((TILE_SIZE, TILE_SIZE))
 GRASS_SURF.fill('#7CFC00')
 
-SURFS = (DEEP_WATER_SURF, SHALLOW_WATER_SURF, SAND_SURF, GRASS_SURF)
+SURFS = (WATER_0_SURF, WATER_1_SURF, WATER_2_SURF, SAND_SURF, GRASS_SURF)
 
 
 class WorldGen:
@@ -27,7 +30,7 @@ class WorldGen:
     def __iter__(self):
         return iter(self.chunks)
 
-    def generate_perlin_noise(self, groups, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0):
+    def generate_perlin_noise(self, groups, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0, base=91):
         for y in range(self.size):
             row = []
             for x in range(self.size):
@@ -39,15 +42,17 @@ class WorldGen:
                     octaves=octaves,
                     persistence=persistance,
                     lacunarity=lacunarity,
-                    base=91
+                    base=base
                 )
-                if noise_value <= -0.2:
+                if noise_value <= -0.35:
                     tile_id = 0
-                elif noise_value <= -0.15:
+                elif noise_value <= -0.2:
                     tile_id = 1
-                elif noise_value <= -0.1:
+                elif noise_value <= -0.15:
                     tile_id = 2
-                else: tile_id = 3
+                elif noise_value <= -0.1:
+                    tile_id = 3
+                else: tile_id = 4
                 row.append(tile_id)
             self.tiles_grid.append(row)
 
