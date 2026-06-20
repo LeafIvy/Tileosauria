@@ -25,7 +25,7 @@ class WorldGen:
         self.chunks = []
 
     def __iter__(self):
-        return iter(self.tiles_grid)
+        return iter(self.chunks)
 
     def generate_perlin_noise(self, groups, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0):
         for y in range(self.size):

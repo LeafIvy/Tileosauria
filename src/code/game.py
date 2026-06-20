@@ -1,5 +1,3 @@
-from pygame.sprite import Sprite
-
 from src.utils import *
 from .player import Player
 from .tileosaur import Tileosaur
@@ -18,6 +16,8 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(512)
+        self.world.generate_perlin_noise(512)
+        self.world.generate_chunks()
         pg.display.set_caption(TITLE)
 
         # sprite groups
