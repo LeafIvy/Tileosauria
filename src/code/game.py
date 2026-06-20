@@ -62,8 +62,8 @@ class Game:
             self.screen.fill(BG_COLOR)
             for row in self.world:
                 for tile in row:
-                    if (self.player.view_left + TILE_SIZE * 3 <= tile.rect.x <= self.player.view_right + TILE_SIZE * 3
-                    and self.player.view_top + TILE_SIZE * 3 <= tile.rect.y <= self.player.view_bottom + TILE_SIZE * 3):
+                    if (self.player.view_left - TILE_SIZE * 3 <= tile.rect.x <= self.player.view_right + TILE_SIZE * 3
+                    and self.player.view_top - TILE_SIZE * 3 <= tile.rect.y <= self.player.view_bottom + TILE_SIZE * 3):
                         if tile not in self.all_sprites: self.all_sprites.add(tile)
                     else:
                         if tile in self.all_sprites: tile.remove(self.all_sprites)

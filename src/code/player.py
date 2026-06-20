@@ -20,6 +20,9 @@ class Player(pg.sprite.Sprite):
         # collision
         self.collision_sprites = collision_sprites
 
+        self.update_view_edges()
+
+    def update_view_edges(self):
         # position of screen edges in actual pixel coordinates
         self.view_right = self.rect.centerx + WINDOW_WIDTH / 2
         self.view_left = self.rect.centerx - WINDOW_WIDTH / 2
@@ -55,3 +58,4 @@ class Player(pg.sprite.Sprite):
         self.input()
         self.movement_timer.update()
         self.move(dt)
+        self.update_view_edges()

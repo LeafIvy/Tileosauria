@@ -25,7 +25,7 @@ class WorldGen:
                     lacunarity=lacunarity,
                     base=91
                 )
-                if noise_value <= -1.6:
+                if noise_value <= -0.1:
                     color = 'blue'
                 else: color = 'black'
                 row.append(Tile((x, y), color, groups))
