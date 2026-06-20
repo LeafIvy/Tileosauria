@@ -40,3 +40,18 @@ class Tile(pg.sprite.Sprite):
         self.rect.x *= TILE_SIZE
         self.rect.y *= TILE_SIZE
         self.color = color
+
+class Chunk(pg.sprite.Sprite):
+    def __init__(self, tiles, pos, groups):
+        super().__init__(groups)
+
+        self.tiles = tiles
+        self.origin = tiles[0].rect.topleft
+        self.chunk_size = 16
+        self.image = pg.Surface((self.chunk_size * TILE_SIZE, self.chunk_size * TILE_SIZE))
+        blit_sequence = []
+        for row in tiles:
+            for tile in row:
+                blit_sequence.append((tile.image, tile.rect.topleft))
+        self.image.blits(blit_sequence)
+        self.image.scroll(*self.origin)
