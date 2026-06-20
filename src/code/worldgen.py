@@ -7,6 +7,7 @@ class WorldGen:
     def __init__(self, size):
         self.size = size
         self.world = []
+        self.chunks = []
 
     def __iter__(self):
         return iter(self.world)
@@ -35,6 +36,32 @@ class WorldGen:
                 row.append(Tile((x, y), color, groups))
             self.world.append(row)
 
+    def generate_chunks(self):
+        chunk_size = 16
+        current_x, current_y = 0, 0
+        while current_y < self.size:
+            while current_x < self.size:
+                chunk = []
+                counter_y = 0
+                for row in self.world[current_y:]:
+                    tiles = []
+                    counter_x = 0
+                    for tile in row[current_x:]:
+                        tiles.append(tile)
+                        counter_x += 1
+                        if counter_x == chunk_size:
+                            counter_x = 0
+                            break
+                    chunk.append(tiles)
+                    counter_y += 1
+                    if counter_y == chunk_size:
+                        counter_y = 0
+                        break
+                self.chunks.append(Chunk(chunk))
+                current_x += chunk_size
+            current_x = 0
+            current_y += chunk_size
+
 class Tile(pg.sprite.Sprite):
     def __init__(self, pos, color, groups):
         super().__init__(groups)
@@ -46,15 +73,15 @@ class Tile(pg.sprite.Sprite):
         self.color = color
 
 class Chunk(pg.sprite.Sprite):
-    def __init__(self, tiles, pos, groups):
-        super().__init__(groups)
+    def __init__(self, chunk):
+        pg.sprite.Sprite.__init__(self)
 
-        self.tiles = tiles
-        self.origin = tiles[0].rect.topleft
+        self.chunk = chunk
+        self.origin = chunk[0][0].rect.topleft
         self.chunk_size = 16
         self.image = pg.Surface((self.chunk_size * TILE_SIZE, self.chunk_size * TILE_SIZE))
         blit_sequence = []
-        for row in tiles:
+        for row in chunk:
             for tile in row:
                 blit_sequence.append((tile.image, tile.rect.topleft))
         self.image.blits(blit_sequence)
