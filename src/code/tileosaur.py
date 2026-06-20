@@ -6,8 +6,8 @@ import heapq
 
 class Tileosaur(Creature):
     """Base class for fauna"""
-    def __init__(self, surf, pos, groups, target, collision_sprites):
-        super().__init__(surf, pos, groups)
+    def __init__(self, surf, pos, target, collision_sprites):
+        super().__init__(surf, pos)
 
         self.collision_sprites = collision_sprites
 

@@ -3,8 +3,8 @@ from src.utils import *
 
 class Player(pg.sprite.Sprite):
     """Base class for Player"""
-    def __init__(self, surf, pos, groups, collision_sprites):
-        super().__init__(groups)
+    def __init__(self, surf, pos, collision_sprites):
+        pg.sprite.Sprite.__init__(self)
 
         # base settings
         self.image   = surf

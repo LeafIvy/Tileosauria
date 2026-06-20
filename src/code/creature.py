@@ -3,8 +3,8 @@ from src.utils import *
 
 class Creature(pg.sprite.Sprite):
     """Base class for all creatures (flora and fauna)"""
-    def __init__(self, surf, pos, groups):
-        super().__init__(groups)
+    def __init__(self, surf, pos):
+        pg.sprite.Sprite.__init__(self)
 
         # base settings
         self.image = surf

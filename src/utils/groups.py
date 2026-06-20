@@ -1,7 +1,7 @@
 from src.utils import *
 
 
-class AllSprites(pg.sprite.Group):
+class AllSprites(pg.sprite.LayeredUpdates):
     """Class for containing all sprites and for camera implementation"""
     def __init__(self):
         super().__init__()

@@ -1,3 +1,5 @@
+from pygame.sprite import Sprite
+
 from src.utils import *
 from .player import Player
 from .tileosaur import Tileosaur
@@ -16,25 +18,28 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(512)
-        self.world.generate_perlin_noise(None)
         pg.display.set_caption(TITLE)
 
         # sprite groups
         self.all_sprites = AllSprites()
         self.collision_sprites = set()
         self.tile_sprites = pg.sprite.Group()
+        self.world.generate_perlin_noise(self.tile_sprites)
 
         # player setup
-        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,), self.collision_sprites)
+        self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), self.collision_sprites)
+        self.all_sprites.add(self.player, layer=1)
 
         saur_surf = pg.image.load(join('src', 'images', 'tileosaurs', 'Palitiles.png')).convert_alpha()
         saur_surf = pg.transform.scale_by(saur_surf, TILE_SIZE / saur_surf.get_width())
-        self.saur = Tileosaur(saur_surf, (3*TILE_SIZE, 2*TILE_SIZE), (self.all_sprites,), self.player, self.collision_sprites)
+        self.saur = Tileosaur(saur_surf, (3*TILE_SIZE, 2*TILE_SIZE), self.player, self.collision_sprites)
+        self.all_sprites.add(self.saur, layer=1)
         self.collision_sprites.add(self.saur)
 
         podia_surf = pg.image.load(join('src', 'images', 'tileopodiums', 'Tonyveils.png')).convert_alpha()
         podia_surf = pg.transform.scale_by(podia_surf, TILE_SIZE / podia_surf.get_width())
-        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE), (self.all_sprites,))
+        self.podia = Tileopodium(podia_surf, (-5*TILE_SIZE, 3*TILE_SIZE))
+        self.all_sprites.add(self.podia, layer=1)
         self.collision_sprites.add(self.podia)
 
         # grid
@@ -55,10 +60,13 @@ class Game:
 
             # draw calls
             self.screen.fill(BG_COLOR)
-            for pos, tile in self.world:
-                if (self.player.view_left <= pos[0] <= self.player.view_right
-                and self.player.view_top <= pos[1] <= self.player.view_bottom):
-                    self.screen.blit(tile.image, tile.rect.topleft + self.all_sprites.offset)
+            for row in self.world:
+                for tile in row:
+                    if (self.player.view_left + TILE_SIZE * 3 <= tile.rect.x <= self.player.view_right + TILE_SIZE * 3
+                    and self.player.view_top + TILE_SIZE * 3 <= tile.rect.y <= self.player.view_bottom + TILE_SIZE * 3):
+                        if tile not in self.all_sprites: self.all_sprites.add(tile)
+                    else:
+                        if tile in self.all_sprites: tile.remove(self.all_sprites)
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid
