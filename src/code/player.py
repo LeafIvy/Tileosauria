@@ -21,10 +21,10 @@ class Player(pg.sprite.Sprite):
         self.collision_sprites = collision_sprites
 
         # position of screen edges in actual pixel coordinates
-        self.view_right = self.player.centerx + WINDOW_WIDTH / 2
-        self.view_left = self.player.centerx - WINDOW_WIDTH / 2
-        self.view_top = self.player.centery - WINDOW_HEIGHT / 2
-        self.view_bottom = self.player.centery + WINDOW_HEIGHT / 2
+        self.view_right = self.rect.centerx + WINDOW_WIDTH / 2
+        self.view_left = self.rect.centerx - WINDOW_WIDTH / 2
+        self.view_top = self.rect.centery - WINDOW_HEIGHT / 2
+        self.view_bottom = self.rect.centery + WINDOW_HEIGHT / 2
 
     def input(self):
         """Get input from keyboard and alter direction vector"""

@@ -16,13 +16,13 @@ class Game:
         self.clock      = pg.time.Clock()
         self.running    = True
         self.world = WorldGen(512)
+        self.world.generate_perlin_noise(None)
         pg.display.set_caption(TITLE)
 
         # sprite groups
         self.all_sprites = AllSprites()
         self.collision_sprites = set()
         self.tile_sprites = pg.sprite.Group()
-        self.world.generate_perlin_noise(self.tile_sprites)
 
         # player setup
         self.player = Player(pg.Surface((TILE_SIZE, TILE_SIZE)), (0, 0), (self.all_sprites,), self.collision_sprites)
@@ -56,9 +56,9 @@ class Game:
             # draw calls
             self.screen.fill(BG_COLOR)
             for pos, tile in self.world:
-                tile.rect.center += self.all_sprites.offset
-                pg.draw.rect(self.screen, tile.color, tile.rect)
-                tile.rect.topleft = (pos[0] * TILE_SIZE, pos[1] * TILE_SIZE)
+                if (self.player.view_left <= pos[0] <= self.player.view_right
+                and self.player.view_top <= pos[1] <= self.player.view_bottom):
+                    self.screen.blit(tile.image, tile.rect.topleft + self.all_sprites.offset)
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid

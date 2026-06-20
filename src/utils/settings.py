@@ -9,5 +9,5 @@ FPS = 120
 TITLE = 'Tileosauria'
 
 # screen settings
-TILE_SIZE = 8
-BG_COLOR = 'green'
+TILE_SIZE = 64
+BG_COLOR = 'white'

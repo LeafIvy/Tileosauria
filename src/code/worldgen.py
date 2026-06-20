@@ -33,7 +33,8 @@ class Tile(pg.sprite.Sprite):
     def __init__(self, pos, color, groups):
         super().__init__(groups)
         self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.image.fill(color)
         self.rect = self.image.get_frect(topleft=pos)
-        self.rect.centerx *= TILE_SIZE
-        self.rect.centery *= TILE_SIZE
+        self.rect.x *= TILE_SIZE
+        self.rect.y *= TILE_SIZE
         self.color = color
