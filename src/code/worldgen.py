@@ -52,38 +52,16 @@ class WorldGen:
             self.tiles_grid.append(row)
 
     def generate_chunks(self):
-        chunk_size = 16
-        current_x, current_y = 0, 0
-        while current_y < self.size:
-            while current_x < self.size:
-                chunk = []
-                origin = (current_x * TILE_SIZE, current_y * TILE_SIZE)
-                counter_y = 0
-                for row in self.tiles_grid[current_y:]:
-                    tiles = []
-                    counter_x = 0
-                    for tile in row[current_x:]:
-                        tiles.append(tile)
-                        counter_x += 1
-                        if counter_x == chunk_size:
-                            counter_x = 0
-                            break
-                    chunk.append(tiles)
-                    counter_y += 1
-                    if counter_y == chunk_size:
-                        counter_y = 0
-                        break
+        for y in range(0, self.size, CHUNK_SIZE):
+            for x in range(0, self.size, CHUNK_SIZE):
+                chunk = [row[x:x+CHUNK_SIZE] for row in self.tiles_grid[y:y+CHUNK_SIZE]]
+                origin = (x * TILE_SIZE, y * TILE_SIZE)
                 self.chunks.append(Chunk(chunk, origin))
-                current_x += chunk_size
-            current_x = 0
-            current_y += chunk_size
 
-class Chunk(pg.sprite.Sprite):
+class Chunk:
     def __init__(self, chunk, origin):
-        pg.sprite.Sprite.__init__(self)
-
         self.origin = origin
-        self.image = pg.Surface((chunk_size * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
+        self.image = pg.Surface((CHUNK_SIZE * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
         blit_sequence = []
         for y, row in enumerate(chunk):
             for x, tile_id in enumerate(row):
