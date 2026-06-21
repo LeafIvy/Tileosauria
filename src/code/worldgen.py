@@ -80,8 +80,11 @@ class Chunk:
                 blit_sequence.append((SURFS[tile_id], (x * TILE_SIZE, y * TILE_SIZE)))
 
         self.image.blits(blit_sequence)
+        self.image_original = self.image.copy()
 
     def draw_border(self):
         """Draws chunk's borders"""
         pg.draw.rect(self.image, 'darkblue', self.rect, 1)
 
+    def redraw_chunk(self):
+        self.image.blit(self.image_original)

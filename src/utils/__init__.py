@@ -10,10 +10,11 @@ def get_quit(event):
 
 def check_commands_pressed():
     """Returns the command combinations pressed"""
-    keys = pg.key.get_just_pressed()
-    if keys[pg.K_F3]:
-        if keys[pg.K_g]:
+    keys0 = pg.key.get_pressed()
+    keys1 = pg.key.get_just_pressed()
+    if keys0[pg.K_F3]:
+        if keys1[pg.K_g]:
             return 'draw-grid'
-        elif keys[pg.K_b]:
+        elif keys1[pg.K_b]:
             return 'draw-border'
     return None

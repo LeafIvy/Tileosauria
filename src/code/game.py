@@ -60,15 +60,16 @@ class Game:
             <= chunk.origin[1] <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
                 visible_chunks.append((chunk.image, chunk.origin + self.all_sprites.offset))
                 if self.draw_borders: chunk.draw_border()
+                else: chunk.redraw_chunk()
         self.screen.blits(visible_chunks)
 
     def update_commands(self):
         """Checks for special command combinations pressed and enables them"""
         command = check_commands_pressed()
         if command == 'draw-grid':
-            self.draw_grid = True
-        elif command == 'draw-borer':
-            self.draw_borders = True
+            self.draw_grid = not self.draw_grid
+        elif command == 'draw-border':
+            self.draw_borders = not self.draw_borders
 
     def run(self):
         """Starts the game loop"""
