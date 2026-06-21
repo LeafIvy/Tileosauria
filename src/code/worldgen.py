@@ -73,9 +73,15 @@ class Chunk:
     def __init__(self, chunk, origin):
         self.origin = origin
         self.image = pg.Surface((CHUNK_SIZE * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
+        self.rect = self.image.get_frect()
         blit_sequence = []
         for y, row in enumerate(chunk):
             for x, tile_id in enumerate(row):
                 blit_sequence.append((SURFS[tile_id], (x * TILE_SIZE, y * TILE_SIZE)))
 
         self.image.blits(blit_sequence)
+
+    def draw_border(self):
+        """Draws chunk's borders"""
+        pg.draw.rect(self.image, 'darkblue', self.rect, 1)
+
