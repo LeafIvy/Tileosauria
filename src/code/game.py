@@ -62,6 +62,14 @@ class Game:
                 if self.draw_borders: chunk.draw_border()
         self.screen.blits(visible_chunks)
 
+    def update_commands(self):
+        """Checks for special command combinations pressed and enables them"""
+        command = check_commands_pressed()
+        if command == 'draw-grid':
+            self.draw_grid = True
+        elif command == 'draw-borer':
+            self.draw_borders = True
+
     def run(self):
         """Starts the game loop"""
         while self.running:
@@ -81,6 +89,7 @@ class Game:
                 for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
 
             # update calls
+            self.update_commands()
             self.all_sprites.update(dt)
             pg.display.update()
 
