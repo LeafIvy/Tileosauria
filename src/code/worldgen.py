@@ -83,12 +83,13 @@ class Chunk:
         self.borders_drawn = False
 
     def draw_border(self):
-        """Draws chunk's borders"""
+        """Draws chunk's borders only once if not already drawn"""
         if not self.borders_drawn:
             pg.draw.rect(self.image, 'darkblue', self.rect.move_to(topleft=(0, 0)), 1)
             self.borders_drawn = True
 
     def redraw_chunk(self):
+        """Redraws chunk only once when called"""
         if self.borders_drawn:
             self.image.blit(self.image_original)
             self.borders_drawn = False
