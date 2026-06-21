@@ -24,8 +24,7 @@ SURFS = (WATER_0_SURF, WATER_1_SURF, WATER_2_SURF, SAND_SURF, GRASS_SURF)
 
 class WorldGen:
     """Manages generating terrain"""
-    def __init__(self, size):
-        self.size = size
+    def __init__(self):
         self.tiles_grid = []
         self.chunks = []
 
@@ -34,9 +33,9 @@ class WorldGen:
 
     def generate_perlin_noise(self, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0, base=91):
         """Generates noise map"""
-        for y in range(self.size):
+        for y in range(WORLD_SIZE):
             row = []
-            for x in range(self.size):
+            for x in range(WORLD_SIZE):
                 dx = x / scale
                 dy = y /scale
                 noise_value = noise.pnoise2(
@@ -45,6 +44,8 @@ class WorldGen:
                     octaves=octaves,
                     persistence=persistance,
                     lacunarity=lacunarity,
+                    repeatx=WORLD_SIZE,
+                    repeaty=WORLD_SIZE,
                     base=base
                 )
                 if noise_value <= -0.35:
@@ -61,8 +62,8 @@ class WorldGen:
 
     def generate_chunks(self):
         """Splits the noise map grid into chunks"""
-        for y in range(0, self.size, CHUNK_SIZE):
-            for x in range(0, self.size, CHUNK_SIZE):
+        for y in range(0, WORLD_SIZE, CHUNK_SIZE):
+            for x in range(0, WORLD_SIZE, CHUNK_SIZE):
                 chunk = [row[x:x+CHUNK_SIZE] for row in self.tiles_grid[y:y+CHUNK_SIZE]]
                 origin = (x * TILE_SIZE, y * TILE_SIZE) # to draw chunk in correct position later
                 self.chunks.append(Chunk(chunk, origin))

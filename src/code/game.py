@@ -16,7 +16,7 @@ class Game:
         self.screen     = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock      = pg.time.Clock()
         self.running    = True
-        self.world = WorldGen(WORLD_SIZE)
+        self.world = WorldGen()
         self.world.generate_perlin_noise(base=randint(0, 169))
         self.world.generate_chunks()
         pg.display.set_caption(TITLE)
