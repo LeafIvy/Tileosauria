@@ -12,7 +12,7 @@ class Tileosaur(Creature):
         self.collision_sprites = collision_sprites
 
         # movement
-        self.speed          = 3
+        self.speed          = 6
         self.initial_delay  = 1000/self.speed
         self.move_delay     = Timer(self.initial_delay, func=self.move, autostart=True, repeat=True)
         self.player         = target
@@ -133,10 +133,9 @@ class Tileosaur(Creature):
 
         # normalizing diagonal movement speed
         if self.direction.magnitude() > 1:
-            if self.move_delay.duration  == self.initial_delay:
-                self.move_delay.duration *= 1.414
+            self.move_delay.duration = 1.414 * self.initial_delay
         else:
-            self.move_delay.duration = 1000/self.speed
+            self.move_delay.duration = self.initial_delay
 
     def move(self):
         """Moves sprite in the direction it's pointing"""
