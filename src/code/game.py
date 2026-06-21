@@ -3,7 +3,7 @@ from .player import Player
 from .tileosaur import Tileosaur
 from .tileopodium import Tileopodium
 from src.utils.groups import AllSprites
-from .worldgen import WorldGen
+from .worldgen import WorldGen, Chunk
 from random import randint
 
 
@@ -16,6 +16,8 @@ class Game:
         self.screen     = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock      = pg.time.Clock()
         self.running    = True
+        self.draw_borders = False
+        self.draw_grid = False
         self.world = WorldGen()
         self.world.generate_perlin_noise(base=randint(0, 169))
         self.world.generate_chunks()
@@ -53,10 +55,11 @@ class Game:
         visible_chunks = []
         for chunk in self.world:
             if (self.player.view_left - 2 * TILE_SIZE * CHUNK_SIZE
-                    <= chunk.origin[0] <= self.player.view_right + TILE_SIZE * CHUNK_SIZE
+            <= chunk.origin[0] <= self.player.view_right + TILE_SIZE * CHUNK_SIZE
             and self.player.view_top - 2 * TILE_SIZE * CHUNK_SIZE
-                    <= chunk.origin[1] <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
+            <= chunk.origin[1] <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
                 visible_chunks.append((chunk.image, chunk.origin + self.all_sprites.offset))
+                if self.draw_borders: chunk.draw_border()
         self.screen.blits(visible_chunks)
 
     def run(self):
@@ -74,7 +77,8 @@ class Game:
             self.all_sprites.draw(self.player.rect.center)
 
             # draw grid
-            for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
+            if self.draw_grid:
+                for line in self.grid: pg.draw.aaline(self.screen, 'black', line[0], line[1])
 
             # update calls
             self.all_sprites.update(dt)
