@@ -71,9 +71,8 @@ class WorldGen:
 class Chunk:
     """Chunks to be used to group together tiles for easier drawing"""
     def __init__(self, chunk, origin):
-        self.origin = origin
         self.image = pg.Surface((CHUNK_SIZE * TILE_SIZE, CHUNK_SIZE * TILE_SIZE))
-        self.rect = self.image.get_frect()
+        self.rect = self.image.get_frect(topleft=origin)
         blit_sequence = []
         for y, row in enumerate(chunk):
             for x, tile_id in enumerate(row):
@@ -81,10 +80,15 @@ class Chunk:
 
         self.image.blits(blit_sequence)
         self.image_original = self.image.copy()
+        self.borders_drawn = False
 
     def draw_border(self):
         """Draws chunk's borders"""
-        pg.draw.rect(self.image, 'darkblue', self.rect, 1)
+        if not self.borders_drawn:
+            pg.draw.rect(self.image, 'darkblue', self.rect.move_to(topleft=(0, 0)), 1)
+            self.borders_drawn = True
 
     def redraw_chunk(self):
-        self.image.blit(self.image_original)
+        if self.borders_drawn:
+            self.image.blit(self.image_original)
+            self.borders_drawn = False

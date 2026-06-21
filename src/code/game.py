@@ -55,10 +55,10 @@ class Game:
         visible_chunks = []
         for chunk in self.world:
             if (self.player.view_left - 2 * TILE_SIZE * CHUNK_SIZE
-            <= chunk.origin[0] <= self.player.view_right + TILE_SIZE * CHUNK_SIZE
+            <= chunk.rect.x <= self.player.view_right + TILE_SIZE * CHUNK_SIZE
             and self.player.view_top - 2 * TILE_SIZE * CHUNK_SIZE
-            <= chunk.origin[1] <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
-                visible_chunks.append((chunk.image, chunk.origin + self.all_sprites.offset))
+            <= chunk.rect.y <= self.player.view_bottom + TILE_SIZE * CHUNK_SIZE):
+                visible_chunks.append((chunk.image, chunk.rect.topleft + self.all_sprites.offset))
                 if self.draw_borders: chunk.draw_border()
                 else: chunk.redraw_chunk()
         self.screen.blits(visible_chunks)
