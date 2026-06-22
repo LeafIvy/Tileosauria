@@ -31,7 +31,7 @@ class WorldGen:
     def __iter__(self):
         return iter(self.chunks)
 
-    def generate_perlin_noise(self, scale=100.0, octaves=6, persistance=0.3, lacunarity=2.0, base=91):
+    def generate_perlin_noise(self, scale=128.0, octaves=6, persistance=0.3, lacunarity=2.0, base=91):
         """Generates noise map"""
         for y in range(WORLD_SIZE):
             row = []
@@ -44,17 +44,17 @@ class WorldGen:
                     octaves=octaves,
                     persistence=persistance,
                     lacunarity=lacunarity,
-                    repeatx=WORLD_SIZE,
-                    repeaty=WORLD_SIZE,
+                    repeatx=WORLD_SIZE / scale,
+                    repeaty=WORLD_SIZE / scale,
                     base=base
                 )
-                if noise_value <= -0.35:
+                if noise_value <= -0.325:
                     tile_id = 0             # deep water
-                elif noise_value <= -0.2:
+                elif noise_value <= -0.275:
                     tile_id = 1             # water water
-                elif noise_value <= -0.15:
+                elif noise_value <= -0.225:
                     tile_id = 2             # shallow water
-                elif noise_value <= -0.1:
+                elif noise_value <= -0.175:
                     tile_id = 3             # sand
                 else: tile_id = 4           # grass
                 row.append(tile_id)
